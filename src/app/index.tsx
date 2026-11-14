@@ -1,13 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Redirect } from 'expo-router';
 
+import { useAuth } from '@/contexts/AuthContext';
+
+/** Rota de entrada ("/"): manda para o Início se houver sessão, senão para o Login. */
 export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text>Ressoa</Text>
-    </View>
-  );
+  const { sessao } = useAuth();
+  return <Redirect href={sessao ? '/inicio' : '/login'} />;
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-});
