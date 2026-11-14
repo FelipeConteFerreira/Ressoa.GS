@@ -123,8 +123,8 @@ As demais dependências vêm do template oficial do Expo e são exigidas pelo Ex
 **Pré-requisitos:** Node.js LTS e o app **Expo Go** no celular (ou um emulador Android).
 
 ```bash
-git clone https://github.com/FelipeConteFerreira/NOME-DO-REPO.git
-cd NOME-DO-REPO
+git clone https://github.com/FelipeConteFerreira/Ressoa.GS.git
+cd Ressoa.GS
 npm install
 cp .env.example .env
 npx expo start
