@@ -6,7 +6,7 @@
 
 **Matar a larva do Aedes com som antes que a seca vire epidemia.**
 
-Global Solution 2026/2 · FIAP · CitizenTech · Mobile Application Development
+Global Solution 2026 · FIAP · CitizenTech · Mobile Application Development
 
 ![React Native](https://img.shields.io/badge/React_Native-0.88-0E6BA8?logo=react&logoColor=white)
 ![Expo](https://img.shields.io/badge/Expo-SDK_58-0A3D62?logo=expo&logoColor=white)
@@ -175,14 +175,8 @@ As URLs públicas das APIs ficam no perfil `preview` do `eas.json`, porque o EAS
 
 | Nome | RM |
 | --- | --- |
-| Altamir Lima | RM562906 |
-| Felipe Conte | RM562248 |
-| Luiz Gustavo | RM564495 |
-| Olavo Porto Neves | RM563558 |
-| Pedro Henrique Dias França | RM561940 |
-
-## 🤖 Declaração de uso de IA
-
-| Ferramenta | Uso |
-| --- | --- |
-| Claude (Anthropic) | Estrutura inicial do projeto, organização de pastas, componentes base, capturas de tela e revisão de código. Todo o código foi revisado e testado pelo grupo. |
+| Altamir Lima | 562906 |
+| Felipe Conte | 562248 |
+| Luiz Gustavo | 564495 |
+| Olavo Porto Neves | 563558 |
+| Pedro Henrique Dias França | 561940 |
