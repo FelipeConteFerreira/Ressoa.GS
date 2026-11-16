@@ -37,7 +37,10 @@ export default function TabsLayout() {
         headerTitleStyle: { fontFamily: fonts.semiBold },
       }}
     >
-      <Tabs.Screen name="inicio" options={{ title: 'Início', tabBarIcon: icone('home') }} />
+      <Tabs.Screen
+        name="inicio"
+        options={{ title: 'Início', headerShown: false, tabBarIcon: icone('home') }}
+      />
       <Tabs.Screen
         name="aparelhos"
         options={{ title: 'Meus aparelhos', tabBarLabel: 'Aparelhos', tabBarIcon: icone('water') }}
