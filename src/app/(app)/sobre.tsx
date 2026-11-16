@@ -35,7 +35,11 @@ export default function SobreScreen() {
       <Card>
         <AppText variant="bodyStrong">Global Solution 2026/2 · FIAP</AppText>
         <AppText muted>Mobile Application Development</AppText>
-        {/* TODO: nomes e RMs dos integrantes */}
+        <AppText muted>Altamir Lima · RM562906</AppText>
+        <AppText muted>Felipe Conte · RM562248</AppText>
+        <AppText muted>Luiz Gustavo · RM564495</AppText>
+        <AppText muted>Olavo Porto Neves · RM563558</AppText>
+        <AppText muted>Pedro Henrique Dias França · RM561940</AppText>
       </Card>
     </Screen>
   );
