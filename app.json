@@ -40,6 +40,18 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "commitHash": "eac0c00",
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "dd0946b7-708f-4f29-be04-eb56c8b4a90d"
+      }
+    },
+    "owner": "felipeconte"
   }
 }
