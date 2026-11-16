@@ -13,8 +13,8 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_JAVA_API_URL": "https://SUA-API-JAVA.azurewebsites.net",
-        "EXPO_PUBLIC_DOTNET_API_URL": "https://SUA-API-DOTNET.azurewebsites.net",
+        "EXPO_PUBLIC_JAVA_API_URL": "https://ressoa-api-java.onrender.com",
+        "EXPO_PUBLIC_DOTNET_API_URL": "https://ressoa-api-dotnet.onrender.com",
         "EXPO_PUBLIC_USE_MOCK": "false"
       }
     },

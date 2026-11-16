@@ -5,7 +5,7 @@ import { Alert, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { AppText, Button, Card, ErrorView, LoadingView, StatusBadge } from '@/components';
 import { dispositivoService, telemetriaService } from '@/services';
 import { colors, spacing } from '@/theme';
-import type { Dispositivo, Leitura } from '@/types';
+import type { Dispositivo, Leitura, StatusTelemetria } from '@/types';
 import { getErrorMessage } from '@/utils/errors';
 import { formatarDataHora, TIPO_RECIPIENTE_LABEL } from '@/utils/formatters';
 
@@ -14,7 +14,7 @@ export default function DetalheAparelhoScreen() {
   const dispositivoId = Number(id);
 
   const [dispositivo, setDispositivo] = useState<Dispositivo | null>(null);
-  const [status, setStatus] = useState<Leitura | null>(null);
+  const [status, setStatus] = useState<StatusTelemetria | null>(null);
   const [historico, setHistorico] = useState<Leitura[]>([]);
   const [erroTelemetria, setErroTelemetria] = useState<string | null>(null);
   const [carregando, setCarregando] = useState(true);
@@ -94,29 +94,65 @@ export default function DetalheAparelhoScreen() {
       </Card>
 
       <Card>
-        <AppText variant="bodyStrong">Último status do aparelho</AppText>
+        <View style={styles.titulo}>
+          <AppText variant="bodyStrong">Último status do aparelho</AppText>
+          {status ? (
+            <AppText
+              variant="caption"
+              style={{ color: status.online ? colors.success : colors.textMuted }}
+            >
+              {status.online ? '● Online' : '○ Sem sinal'}
+            </AppText>
+          ) : null}
+        </View>
+
         {erroTelemetria ? (
           <AppText style={{ color: colors.danger }}>
             Telemetria indisponível: {erroTelemetria}
           </AppText>
-        ) : status ? (
+        ) : status?.ultimaLeituraEm ? (
           <>
-            <Linha
-              rotulo="Bateria"
-              valor={`${status.bateriaPct}%`}
-              destaque={status.bateriaPct < 15}
-            />
-            <Linha rotulo="Temperatura da água" valor={`${status.temperaturaAgua.toFixed(1)} °C`} />
-            <Linha
-              rotulo="Pulso de hoje"
-              valor={status.pulsoOk ? 'Executado' : 'Falhou'}
-              destaque={!status.pulsoOk}
-            />
-            <Linha rotulo="Recebido em" valor={formatarDataHora(status.registradaEm)} />
+            {status.bateriaPct !== null ? (
+              <Linha
+                rotulo="Bateria"
+                valor={`${status.bateriaPct}%`}
+                destaque={status.bateriaPct < 15}
+              />
+            ) : null}
+            {status.temperaturaAgua !== null ? (
+              <Linha
+                rotulo="Temperatura da água"
+                valor={`${Number(status.temperaturaAgua).toFixed(1)} °C`}
+              />
+            ) : null}
+            {status.ultimoPulsoOk !== null ? (
+              <Linha
+                rotulo="Último pulso"
+                valor={status.ultimoPulsoOk ? 'Executado' : 'Falhou'}
+                destaque={!status.ultimoPulsoOk}
+              />
+            ) : null}
+            {status.taxaSucessoPulso7Dias !== null ? (
+              <Linha
+                rotulo="Pulsos ok em 7 dias"
+                valor={`${status.taxaSucessoPulso7Dias}% (${status.leiturasUltimos7Dias} leituras)`}
+              />
+            ) : null}
+            <Linha rotulo="Recebido em" valor={formatarDataHora(status.ultimaLeituraEm)} />
           </>
         ) : (
           <AppText muted>O aparelho ainda não enviou nenhum status.</AppText>
         )}
+
+        {status && status.alertas.length > 0 ? (
+          <View style={styles.alertas} accessibilityRole="alert">
+            {status.alertas.map((alerta) => (
+              <AppText key={alerta} variant="caption" style={{ color: colors.warning }}>
+                ⚠ {alerta}
+              </AppText>
+            ))}
+          </View>
+        ) : null}
       </Card>
 
       {historico.length > 0 ? (
@@ -165,4 +201,12 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.md, gap: spacing.md },
   linha: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.md },
+  titulo: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  alertas: {
+    gap: spacing.xs,
+    marginTop: spacing.xs,
+    padding: spacing.sm,
+    borderRadius: 8,
+    backgroundColor: '#FFF4E0',
+  },
 });

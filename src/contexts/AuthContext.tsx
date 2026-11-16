@@ -9,7 +9,7 @@ import {
 } from 'react';
 
 import { authService, definirHandlerDe401, definirToken } from '@/services';
-import type { LoginPayload, Papel, RegistroPayload, Sessao } from '@/types';
+import type { LoginPayload, LoginResponse, Papel, RegistroPayload, Sessao } from '@/types';
 import { lerClaimsDoToken } from '@/utils/jwt';
 import { STORAGE_KEYS, storage } from '@/utils/storage';
 
@@ -61,30 +61,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => definirHandlerDe401(null);
   }, [sair]);
 
-  const entrar = useCallback(
-    async ({ email, senha }: LoginPayload) => {
-      const resposta = await authService.login({ email: email.trim().toLowerCase(), senha });
+  // Monta a sessão a partir da resposta da API (login ou cadastro).
+  const iniciarSessao = useCallback(
+    async (resposta: LoginResponse, email: string) => {
       const claims = lerClaimsDoToken(resposta.token);
+      const bairroDoToken = typeof claims.bairroId === 'number' ? claims.bairroId : undefined;
 
       await salvarSessao({
         token: resposta.token,
-        papel: (resposta.papel ?? claims.papel) as Papel,
-        email: email.trim().toLowerCase(),
-        nome: resposta.nome ?? (typeof claims.nome === 'string' ? claims.nome : undefined),
-        bairroId:
-          resposta.bairroId ?? (typeof claims.bairroId === 'number' ? claims.bairroId : undefined),
+        papel: (resposta.papel ?? resposta.usuario?.papel ?? claims.papel) as Papel,
+        email: resposta.usuario?.email ?? email,
+        nome: resposta.usuario?.nome,
+        bairroId: resposta.usuario?.bairroId ?? bairroDoToken,
       });
     },
     [salvarSessao],
   );
 
+  const entrar = useCallback(
+    async ({ email, senha }: LoginPayload) => {
+      const emailNormalizado = email.trim().toLowerCase();
+      const resposta = await authService.login({ email: emailNormalizado, senha });
+      await iniciarSessao(resposta, emailNormalizado);
+    },
+    [iniciarSessao],
+  );
+
   const cadastrar = useCallback(
     async (payload: RegistroPayload) => {
-      await authService.registrar({ ...payload, email: payload.email.trim().toLowerCase() });
-      // Após o cadastro, já entra no app.
-      await entrar({ email: payload.email, senha: payload.senha });
+      const emailNormalizado = payload.email.trim().toLowerCase();
+      // A API devolve o token no cadastro: o usuário já entra no app.
+      const resposta = await authService.registrar({ ...payload, email: emailNormalizado });
+      await iniciarSessao(resposta, emailNormalizado);
     },
-    [entrar],
+    [iniciarSessao],
   );
 
   const atualizarBairro = useCallback(

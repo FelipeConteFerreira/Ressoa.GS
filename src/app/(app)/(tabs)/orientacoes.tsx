@@ -5,12 +5,13 @@ import { StyleSheet, View } from 'react-native';
 import { AppText, Button, Card, Screen } from '@/components';
 import { useAuth } from '@/contexts/AuthContext';
 import { orientacaoService } from '@/services';
+import type { OrientacaoResponse } from '@/types';
 import { colors, spacing } from '@/theme';
 import { getErrorMessage } from '@/utils/errors';
 
 export default function OrientacoesScreen() {
   const { sessao } = useAuth();
-  const [orientacao, setOrientacao] = useState<string | null>(null);
+  const [orientacao, setOrientacao] = useState<OrientacaoResponse | null>(null);
   const [gerando, setGerando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -62,9 +63,15 @@ export default function OrientacoesScreen() {
 
       {orientacao ? (
         <Card>
-          <AppText selectable>{orientacao}</AppText>
           <AppText variant="caption" muted>
-            Conteúdo gerado por IA. Em caso de sintomas, procure a unidade de saúde mais próxima.
+            {orientacao.bairroNome}
+          </AppText>
+          <AppText selectable>{orientacao.texto}</AppText>
+          <AppText variant="caption" muted>
+            {orientacao.geradaPorIa
+              ? 'Conteúdo gerado por IA.'
+              : 'A IA está indisponível agora: esta é a orientação padrão do protocolo.'}{' '}
+            Em caso de sintomas, procure a unidade de saúde mais próxima.
           </AppText>
         </Card>
       ) : null}

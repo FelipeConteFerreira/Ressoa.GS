@@ -92,6 +92,13 @@ assets/
 └── images/               # Logo, ícone e splash
 ```
 
+APIs consumidas:
+
+| API | Repositório | Deploy |
+| --- | --- | --- |
+| Java · Spring Boot | [ressoa-api-java](https://github.com/olavoneves/ressoa-api-java) | https://ressoa-api-java.onrender.com/swagger-ui.html |
+| .NET · Telemetria | [ressoa-api-dotnet](https://github.com/olavoneves/ressoa-api-dotnet) | https://ressoa-api-dotnet.onrender.com/swagger |
+
 ```text
 [App Mobile] ──login, cadastro, CRUD, risco, IA──▶ [API Java · Spring Boot] ──▶ Oracle
      │
@@ -146,8 +153,11 @@ Leia o QR code com o Expo Go, ou aperte `w` para abrir no navegador.
 
 | Papel | E-mail | Senha |
 | --- | --- | --- |
-| Cidadão | `cidadao@ressoa.com` | `123456` |
-| Gestor | `gestor@ressoa.com` | `123456` |
+| Cidadão | `morador@ressoa.app` | `Ressoa@2026` |
+| Cidadão | `joao@ressoa.app` | `Ressoa@2026` |
+| Gestor | `gestor@ressoa.app` | `Ressoa@2026` |
+
+Os mesmos usuários existem nas APIs reais e na API simulada.
 
 ### Scripts
 

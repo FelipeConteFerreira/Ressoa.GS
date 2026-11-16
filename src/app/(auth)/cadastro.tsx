@@ -14,7 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useBairros } from '@/hooks/useBairros';
 import { colors, spacing } from '@/theme';
 import { getErrorMessage } from '@/utils/errors';
-import { validarEmail, validarObrigatorio, validarSenha } from '@/utils/validators';
+import { validarEmail, validarNome, validarNovaSenha } from '@/utils/validators';
 
 interface ErrosCadastro {
   nome?: string;
@@ -39,9 +39,9 @@ export default function CadastroScreen() {
 
   function validar(): boolean {
     const novosErros: ErrosCadastro = {
-      nome: validarObrigatorio(nome, 'seu nome'),
+      nome: validarNome(nome),
       email: validarEmail(email),
-      senha: validarSenha(senha),
+      senha: validarNovaSenha(senha),
       confirmacao: senha !== confirmacao ? 'As senhas não conferem.' : undefined,
       bairro: bairroId ? undefined : 'Escolha seu bairro.',
     };
@@ -92,7 +92,7 @@ export default function CadastroScreen() {
       />
       <TextField
         label="Senha"
-        placeholder="Mínimo de 6 caracteres"
+        placeholder="8+ caracteres, com letras e números"
         secureTextEntry
         autoComplete="new-password"
         value={senha}

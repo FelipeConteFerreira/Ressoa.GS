@@ -1,4 +1,4 @@
-import type { Dispositivo, DispositivoPayload, Pagina } from '@/types';
+import type { Dispositivo, DispositivoAtualizacao, DispositivoPayload, Pagina } from '@/types';
 
 import { javaApi } from './api';
 
@@ -7,7 +7,9 @@ const RECURSO = '/api/dispositivos';
 /** CRUD de aparelhos Ressoa (API Java). O CIDADAO só recebe os próprios aparelhos. */
 export const dispositivoService = {
   async listar(page = 0, size = 10): Promise<Pagina<Dispositivo>> {
-    const { data } = await javaApi.get<Pagina<Dispositivo>>(RECURSO, { params: { page, size } });
+    const { data } = await javaApi.get<Pagina<Dispositivo>>(RECURSO, {
+      params: { page, size, sort: 'instaladoEm,desc' },
+    });
     return data;
   },
 
@@ -21,7 +23,7 @@ export const dispositivoService = {
     return data;
   },
 
-  async atualizar(id: number, payload: DispositivoPayload): Promise<Dispositivo> {
+  async atualizar(id: number, payload: DispositivoAtualizacao): Promise<Dispositivo> {
     const { data } = await javaApi.put<Dispositivo>(`${RECURSO}/${id}`, payload);
     return data;
   },

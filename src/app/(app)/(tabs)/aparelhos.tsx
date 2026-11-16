@@ -48,7 +48,7 @@ export default function AparelhosScreen() {
     try {
       const resposta = await dispositivoService.listar(pagina + 1, TAMANHO_PAGINA);
       setDispositivos((atuais) => [...atuais, ...resposta.content]);
-      setPagina(resposta.number);
+      setPagina(resposta.page);
       setUltimaPagina(resposta.last);
     } catch (e) {
       setErro(getErrorMessage(e));

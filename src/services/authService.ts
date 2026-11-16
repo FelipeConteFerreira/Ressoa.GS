@@ -8,7 +8,9 @@ export const authService = {
     return data;
   },
 
-  async registrar(payload: RegistroPayload): Promise<void> {
-    await javaApi.post('/api/auth/registro', payload);
+  /** A API já devolve o token no cadastro, então o usuário entra direto. */
+  async registrar(payload: RegistroPayload): Promise<LoginResponse> {
+    const { data } = await javaApi.post<LoginResponse>('/api/auth/registro', payload);
+    return data;
   },
 };

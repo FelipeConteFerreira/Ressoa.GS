@@ -15,10 +15,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useBairros } from '@/hooks/useBairros';
 import { dispositivoService } from '@/services';
 import { colors, spacing } from '@/theme';
-import type { DispositivoPayload, TipoRecipiente } from '@/types';
+import type { TipoRecipiente } from '@/types';
 import { getErrorMessage } from '@/utils/errors';
 import { TIPO_RECIPIENTE_LABEL } from '@/utils/formatters';
-import { validarInteiro, validarObrigatorio } from '@/utils/validators';
+import { validarInteiro, validarNumeroSerie } from '@/utils/validators';
 
 const TIPOS = (Object.keys(TIPO_RECIPIENTE_LABEL) as TipoRecipiente[]).map((tipo) => ({
   value: tipo,
@@ -62,10 +62,10 @@ export default function FormAparelhoScreen() {
 
   function validar(): boolean {
     const novosErros: Erros = {
-      numeroSerie: validarObrigatorio(numeroSerie, 'o número de série'),
+      numeroSerie: editando ? undefined : validarNumeroSerie(numeroSerie),
       tipo: tipo ? undefined : 'Escolha o tipo de recipiente.',
-      volume: validarInteiro(volume, 'o volume', 1, 5000),
-      pulsos: validarInteiro(pulsos, 'os pulsos por dia', 1, 6),
+      volume: validarInteiro(volume, 'o volume', 1, 20000),
+      pulsos: validarInteiro(pulsos, 'os pulsos por dia', 1, 24),
       bairro: bairroId ? undefined : 'Escolha o bairro.',
     };
     setErros(novosErros);
@@ -76,8 +76,7 @@ export default function FormAparelhoScreen() {
     setErroGeral(null);
     if (!validar() || !tipo || !bairroId) return;
 
-    const payload: DispositivoPayload = {
-      numeroSerie: numeroSerie.trim().toUpperCase(),
+    const dados = {
       tipoRecipiente: tipo,
       volumeLitros: Number(volume),
       pulsosPorDia: Number(pulsos),
@@ -86,8 +85,10 @@ export default function FormAparelhoScreen() {
 
     setSalvando(true);
     try {
-      if (editando) await dispositivoService.atualizar(Number(id), payload);
-      else await dispositivoService.criar(payload);
+      // O número de série só é enviado no cadastro: a API não permite alterá-lo.
+      if (editando) await dispositivoService.atualizar(Number(id), dados);
+      else
+        await dispositivoService.criar({ ...dados, numeroSerie: numeroSerie.trim().toUpperCase() });
       router.back();
     } catch (e) {
       setErroGeral(getErrorMessage(e));
@@ -104,8 +105,10 @@ export default function FormAparelhoScreen() {
 
       <TextField
         label="Número de série"
-        placeholder="Ex.: RSA-0004"
+        placeholder="Ex.: RSA-2026-0004"
         autoCapitalize="characters"
+        editable={!editando}
+        style={editando ? styles.desabilitado : undefined}
         value={numeroSerie}
         onChangeText={setNumeroSerie}
         error={erros.numeroSerie}
@@ -157,5 +160,6 @@ export default function FormAparelhoScreen() {
 }
 
 const styles = StyleSheet.create({
+  desabilitado: { backgroundColor: colors.background, color: colors.textMuted },
   alert: { backgroundColor: colors.dangerLight, padding: spacing.md, borderRadius: 12 },
 });

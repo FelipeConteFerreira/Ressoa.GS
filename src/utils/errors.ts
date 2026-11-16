@@ -3,6 +3,9 @@ import { isAxiosError } from 'axios';
 /** Converte qualquer erro de API numa mensagem amigável para exibir na tela. */
 export function getErrorMessage(error: unknown): string {
   if (isAxiosError(error)) {
+    if (error.code === 'ECONNABORTED') {
+      return 'O servidor demorou para responder. Ele pode estar acordando: tente de novo em alguns segundos.';
+    }
     if (!error.response) {
       return 'Sem conexão com o servidor. Verifique sua internet e tente novamente.';
     }
@@ -33,17 +36,18 @@ export function getErrorMessage(error: unknown): string {
   return 'Algo deu errado. Tente novamente.';
 }
 
-// Aceita os formatos mais comuns do @RestControllerAdvice e do ProblemDetails do .NET.
+// As duas APIs respondem erros no formato Problem Details (RFC 9457):
+// - Java: { detail, erros: [{ campo, mensagem }] }
+// - .NET: { detail } ou { errors: { campo: [mensagens] } }
 function extrairMensagem(data: unknown): string | undefined {
   if (!data || typeof data !== 'object') return undefined;
   const corpo = data as Record<string, unknown>;
 
-  if (typeof corpo.message === 'string') return corpo.message;
-  if (typeof corpo.mensagem === 'string') return corpo.mensagem;
-  if (typeof corpo.detail === 'string') return corpo.detail;
-
+  // Erros por campo vêm primeiro: são mais úteis que o "detail" genérico.
   if (Array.isArray(corpo.erros) && corpo.erros.length > 0) {
-    return corpo.erros.map(String).join('\n');
+    return corpo.erros
+      .map((e) => (e && typeof e === 'object' && 'mensagem' in e ? String(e.mensagem) : String(e)))
+      .join('\n');
   }
   if (corpo.errors && typeof corpo.errors === 'object') {
     return Object.values(corpo.errors as Record<string, unknown>)
@@ -51,5 +55,9 @@ function extrairMensagem(data: unknown): string | undefined {
       .map(String)
       .join('\n');
   }
+
+  if (typeof corpo.detail === 'string') return corpo.detail;
+  if (typeof corpo.message === 'string') return corpo.message;
+  if (typeof corpo.mensagem === 'string') return corpo.mensagem;
   return undefined;
 }

@@ -1,6 +1,7 @@
-import type { Bairro, Dispositivo, Leitura, Papel } from '@/types';
+import type { Bairro, Dispositivo, Leitura, NivelRisco, Papel } from '@/types';
 
 // Dados fictícios usados só quando EXPO_PUBLIC_USE_MOCK=true.
+// Bairros, usuários e aparelhos imitam a carga inicial da API Java (senha Ressoa@2026).
 
 export interface UsuarioMock {
   id: number;
@@ -11,60 +12,66 @@ export interface UsuarioMock {
   bairroId: number;
 }
 
+export const ACAO_RECOMENDADA: Record<NivelRisco, string> = {
+  VERDE: 'Instalar o Ressoa nos bairros com água intermitente.',
+  AMARELO: 'Mais pulsos por dia, mutirão contra criadouros e alerta aos moradores.',
+  LARANJA: 'Bloqueio da transmissão nos primeiros casos e salas de hidratação.',
+  VERMELHO: 'Plano de emergência, com prioridade a bebês, gestantes e idosos.',
+};
+
+function bairro(
+  id: number,
+  nome: string,
+  municipio: string,
+  uf: string,
+  codigoIbge: string,
+  aguaIntermitente: boolean,
+  nivelRisco: NivelRisco,
+): Bairro {
+  return {
+    id,
+    nome,
+    municipio,
+    uf,
+    codigoIbge,
+    aguaIntermitente,
+    nivelRisco,
+    acaoRecomendada: ACAO_RECOMENDADA[nivelRisco],
+  };
+}
+
 export const bairrosMock: Bairro[] = [
-  {
-    id: 1,
-    nome: 'Jardim Ângela',
-    municipio: 'São Paulo',
-    uf: 'SP',
-    codigoIbge: '3550308',
-    aguaIntermitente: true,
-    nivelRisco: 'AMARELO',
-  },
-  {
-    id: 2,
-    nome: 'Grajaú',
-    municipio: 'São Paulo',
-    uf: 'SP',
-    codigoIbge: '3550308',
-    aguaIntermitente: true,
-    nivelRisco: 'LARANJA',
-  },
-  {
-    id: 3,
-    nome: 'Cidade Tiradentes',
-    municipio: 'São Paulo',
-    uf: 'SP',
-    codigoIbge: '3550308',
-    aguaIntermitente: true,
-    nivelRisco: 'VERDE',
-  },
-  {
-    id: 4,
-    nome: 'Brasilândia',
-    municipio: 'São Paulo',
-    uf: 'SP',
-    codigoIbge: '3550308',
-    aguaIntermitente: false,
-    nivelRisco: 'VERMELHO',
-  },
+  bairro(1, 'Jardim Ângela', 'São Paulo', 'SP', '3550308', true, 'AMARELO'),
+  bairro(2, 'Grajaú', 'São Paulo', 'SP', '3550308', true, 'LARANJA'),
+  bairro(3, 'Complexo da Maré', 'Rio de Janeiro', 'RJ', '3304557', true, 'VERMELHO'),
+  bairro(4, 'Vila Pinho', 'Belo Horizonte', 'MG', '3106200', true, 'VERDE'),
+  bairro(5, 'Ibura', 'Recife', 'PE', '2611606', true, 'AMARELO'),
+  bairro(6, 'Moema', 'São Paulo', 'SP', '3550308', false, 'VERDE'),
 ];
 
 export const usuariosMock: UsuarioMock[] = [
   {
     id: 1,
-    nome: 'Maria Cidadã',
-    email: 'cidadao@ressoa.com',
-    senha: '123456',
-    papel: 'CIDADAO',
+    nome: 'Gestora Vigilância SP',
+    email: 'gestor@ressoa.app',
+    senha: 'Ressoa@2026',
+    papel: 'GESTOR',
     bairroId: 1,
   },
   {
     id: 2,
-    nome: 'Gestor Saúde',
-    email: 'gestor@ressoa.com',
-    senha: '123456',
-    papel: 'GESTOR',
+    nome: 'Maria Aparecida',
+    email: 'morador@ressoa.app',
+    senha: 'Ressoa@2026',
+    papel: 'CIDADAO',
+    bairroId: 1,
+  },
+  {
+    id: 3,
+    nome: 'João Batista',
+    email: 'joao@ressoa.app',
+    senha: 'Ressoa@2026',
+    papel: 'CIDADAO',
     bairroId: 2,
   },
 ];
@@ -72,8 +79,8 @@ export const usuariosMock: UsuarioMock[] = [
 export const dispositivosMock: Dispositivo[] = [
   {
     id: 1,
-    numeroSerie: 'RSA-0001',
-    usuarioId: 1,
+    numeroSerie: 'RSA-2026-0001',
+    usuarioId: 2,
     bairroId: 1,
     tipoRecipiente: 'TAMBOR',
     volumeLitros: 200,
@@ -83,20 +90,20 @@ export const dispositivosMock: Dispositivo[] = [
   },
   {
     id: 2,
-    numeroSerie: 'RSA-0002',
-    usuarioId: 1,
+    numeroSerie: 'RSA-2026-0002',
+    usuarioId: 2,
     bairroId: 1,
     tipoRecipiente: 'CAIXA_DAGUA',
     volumeLitros: 500,
-    pulsosPorDia: 2,
+    pulsosPorDia: 1,
     status: 'BATERIA_BAIXA',
     instaladoEm: '2026-11-05T14:30:00Z',
   },
   {
     id: 3,
-    numeroSerie: 'RSA-0003',
-    usuarioId: 1,
-    bairroId: 1,
+    numeroSerie: 'RSA-2026-0003',
+    usuarioId: 3,
+    bairroId: 2,
     tipoRecipiente: 'BALDE',
     volumeLitros: 20,
     pulsosPorDia: 1,
@@ -111,13 +118,13 @@ export function gerarLeiturasMock(dispositivoId: number): Leitura[] {
     id: dispositivoId * 100 + i,
     dispositivoId,
     registradaEm: new Date(agora - i * 24 * 60 * 60 * 1000).toISOString(),
-    bateriaPct: Math.max(8, 92 - dispositivoId * 20 - i * 3),
+    bateriaPct: Math.max(8, 92 - dispositivoId * 30 - i * 3),
     temperaturaAgua: 24 + ((dispositivoId + i) % 4),
     pulsoOk: i !== 3,
   }));
 }
 
-export const orientacoesMock: Record<string, string> = {
+export const orientacoesMock: Record<Papel, string> = {
   CIDADAO:
     "O risco no seu bairro está subindo. Mantenha a tampa do tambor e da caixa d'água bem fechada, " +
     'confira se o Ressoa está com bateria e, uma vez por semana, esfregue as paredes dos recipientes. ' +

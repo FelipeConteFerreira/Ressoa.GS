@@ -1,6 +1,7 @@
-// Tipos espelham o modelo de dados comum do briefing (tabelas USUARIO, BAIRRO, DISPOSITIVO,
-// LEITURA e AVALIACAO_RISCO), em camelCase como o Spring/ASP.NET serializam por padrão.
-// Confirme os nomes no Swagger das APIs e ajuste só aqui se algo mudar.
+// Tipos espelham os contratos das APIs do Ressoa:
+// - Java (ressoa-api-java): auth, bairros, aparelhos e orientação por IA
+// - .NET (ressoa-api-dotnet): telemetria dos aparelhos
+// Se um contrato mudar no Swagger, ajuste só aqui.
 
 export type Papel = 'CIDADAO' | 'GESTOR';
 export type NivelRisco = 'VERDE' | 'AMARELO' | 'LARANJA' | 'VERMELHO';
@@ -15,6 +16,8 @@ export interface Bairro {
   codigoIbge?: string;
   aguaIntermitente?: boolean;
   nivelRisco?: NivelRisco | null;
+  /** Ação da tabela de níveis, devolvida pela API Java. */
+  acaoRecomendada?: string;
 }
 
 export interface Dispositivo {
@@ -27,27 +30,51 @@ export interface Dispositivo {
   pulsosPorDia: number;
   status: StatusDispositivo;
   instaladoEm?: string;
+  usuarioNome?: string;
+  bairroNome?: string;
 }
 
-/** Corpo enviado no POST/PUT de /api/dispositivos. */
+/** Corpo do POST /api/dispositivos. */
 export type DispositivoPayload = Pick<
   Dispositivo,
   'numeroSerie' | 'bairroId' | 'tipoRecipiente' | 'volumeLitros' | 'pulsosPorDia'
 >;
 
+/** Corpo do PUT /api/dispositivos/{id}: o número de série não pode ser alterado. */
+export type DispositivoAtualizacao = Omit<DispositivoPayload, 'numeroSerie'>;
+
+/** Item do histórico: GET /api/v1/dispositivos/{id}/leituras (API .NET). */
 export interface Leitura {
   id: number;
   dispositivoId: number;
+  numeroSerie?: string;
   registradaEm: string;
   bateriaPct: number;
   temperaturaAgua: number;
   pulsoOk: boolean;
 }
 
-/** Resposta paginada do Spring Data (Page<T>). */
+/** Último status com indicadores: GET /api/v1/dispositivos/{id}/status (API .NET). */
+export interface StatusTelemetria {
+  dispositivoId: number;
+  numeroSerie: string;
+  status: StatusDispositivo;
+  online: boolean;
+  ultimaLeituraEm: string | null;
+  bateriaPct: number | null;
+  temperaturaAgua: number | null;
+  ultimoPulsoOk: boolean | null;
+  pulsosPorDia: number;
+  /** De 0 a 1 (ou de 0 a 100, conforme a API). */
+  taxaSucessoPulso7Dias: number | null;
+  leiturasUltimos7Dias: number;
+  alertas: string[];
+}
+
+/** Envelope de paginação comum às duas APIs. */
 export interface Pagina<T> {
   content: T[];
-  number: number;
+  page: number;
   size: number;
   totalElements: number;
   totalPages: number;
@@ -66,12 +93,33 @@ export interface LoginPayload {
   senha: string;
 }
 
-/** POST /api/auth/login devolve { token, papel }. nome e bairroId são opcionais. */
+export interface UsuarioResponse {
+  id: number;
+  nome: string;
+  email: string;
+  papel: Papel;
+  bairroId: number | null;
+  bairroNome: string | null;
+}
+
+/** Resposta de POST /api/auth/login e POST /api/auth/registro. */
 export interface LoginResponse {
   token: string;
+  tipo?: string;
+  expiraEm?: string;
   papel: Papel;
-  nome?: string;
-  bairroId?: number;
+  usuario?: UsuarioResponse;
+}
+
+/** Resposta de POST /api/bairros/{id}/orientacao. */
+export interface OrientacaoResponse {
+  bairroId: number;
+  bairroNome: string;
+  nivel: NivelRisco;
+  publico: 'MORADOR' | 'GESTOR';
+  texto: string;
+  geradaPorIa: boolean;
+  geradaEm: string;
 }
 
 export interface Sessao {

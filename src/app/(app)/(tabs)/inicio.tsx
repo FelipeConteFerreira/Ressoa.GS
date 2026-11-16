@@ -10,7 +10,7 @@ import { colors, spacing } from '@/theme';
 import type { Bairro, NivelRisco } from '@/types';
 import { getErrorMessage } from '@/utils/errors';
 
-// Ações da tabela de níveis do briefing, em linguagem para o morador.
+// Texto reserva, caso a API não devolva a ação recomendada do nível.
 const ACAO_POR_NIVEL: Record<NivelRisco, string> = {
   VERDE: 'El Niño forte na previsão. É hora de instalar o Ressoa nos recipientes de água guardada.',
   AMARELO:
@@ -76,7 +76,7 @@ export default function InicioScreen() {
         {nivel ? (
           <>
             <RiskBadge nivel={nivel} size="lg" />
-            <AppText>{ACAO_POR_NIVEL[nivel]}</AppText>
+            <AppText>{bairro.acaoRecomendada ?? ACAO_POR_NIVEL[nivel]}</AppText>
           </>
         ) : (
           <AppText muted>Ainda não há avaliação de risco para este bairro.</AppText>

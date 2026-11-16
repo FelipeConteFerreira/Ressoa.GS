@@ -5,10 +5,18 @@ import {
   type InternalAxiosRequestConfig,
 } from 'axios';
 
-import type { Dispositivo, DispositivoPayload, LoginPayload, RegistroPayload } from '@/types';
+import type {
+  Dispositivo,
+  DispositivoPayload,
+  LoginPayload,
+  LoginResponse,
+  RegistroPayload,
+  StatusTelemetria,
+} from '@/types';
 
 import {
   bairrosMock,
+  type UsuarioMock,
   dispositivosMock,
   gerarLeiturasMock,
   orientacoesMock,
@@ -32,21 +40,17 @@ export const mockAdapter: AxiosAdapter = async (config) => {
   if (metodo === 'POST' && url === '/api/auth/login') {
     const { email, senha } = corpo as LoginPayload;
     const encontrado = usuariosMock.find((u) => u.email === email && u.senha === senha);
-    if (!encontrado) return falhar(config, 401, 'E-mail ou senha incorretos.');
-    return ok(config, {
-      token: criarTokenFalso(encontrado.id, encontrado.email, encontrado.papel),
-      papel: encontrado.papel,
-      nome: encontrado.nome,
-      bairroId: encontrado.bairroId,
-    });
+    if (!encontrado) return falhar(config, 401, 'E-mail ou senha inválidos.');
+    return ok(config, respostaDeToken(encontrado));
   }
   if (metodo === 'POST' && url === '/api/auth/registro') {
     const dados = corpo as RegistroPayload;
     if (usuariosMock.some((u) => u.email === dados.email)) {
       return falhar(config, 409, 'Já existe uma conta com este e-mail.');
     }
-    usuariosMock.push({ ...dados, id: usuariosMock.length + 1, papel: 'CIDADAO' });
-    return ok(config, null, 201);
+    const novo: UsuarioMock = { ...dados, id: usuariosMock.length + 1, papel: 'CIDADAO' };
+    usuariosMock.push(novo);
+    return ok(config, respostaDeToken(novo), 201);
   }
 
   // Bairros (GET público)
@@ -62,7 +66,17 @@ export const mockAdapter: AxiosAdapter = async (config) => {
 
   const orientacaoMatch = url.match(/^\/api\/bairros\/(\d+)\/orientacao$/);
   if (metodo === 'POST' && orientacaoMatch) {
-    return ok(config, { orientacao: orientacoesMock[usuario.papel] });
+    const bairro = bairrosMock.find((b) => b.id === Number(orientacaoMatch[1]));
+    if (!bairro) return falhar(config, 404, 'Bairro não encontrado.');
+    return ok(config, {
+      bairroId: bairro.id,
+      bairroNome: bairro.nome,
+      nivel: bairro.nivelRisco,
+      publico: usuario.papel === 'GESTOR' ? 'GESTOR' : 'MORADOR',
+      texto: orientacoesMock[usuario.papel],
+      geradaPorIa: true,
+      geradaEm: new Date().toISOString(),
+    });
   }
 
   // Dispositivos (CRUD)
@@ -99,7 +113,9 @@ export const mockAdapter: AxiosAdapter = async (config) => {
     if (indice === -1) return falhar(config, 404, 'Aparelho não encontrado.');
     if (metodo === 'GET') return ok(config, dispositivosMock[indice]);
     if (metodo === 'PUT') {
-      dispositivosMock[indice] = { ...dispositivosMock[indice], ...(corpo as DispositivoPayload) };
+      // Como na API real, o número de série não é alterado no PUT.
+      const { numeroSerie: _ignorado, ...alteracoes } = corpo as DispositivoPayload;
+      dispositivosMock[indice] = { ...dispositivosMock[indice], ...alteracoes };
       return ok(config, dispositivosMock[indice]);
     }
     if (metodo === 'DELETE') {
@@ -111,7 +127,28 @@ export const mockAdapter: AxiosAdapter = async (config) => {
   // Telemetria (.NET)
   const statusMatch = url.match(/^\/api\/v1\/dispositivos\/(\d+)\/status$/);
   if (metodo === 'GET' && statusMatch) {
-    return ok(config, gerarLeiturasMock(Number(statusMatch[1]))[0]);
+    const dispositivo = dispositivosMock.find((d) => d.id === Number(statusMatch[1]));
+    if (!dispositivo) return falhar(config, 404, 'Aparelho não encontrado.');
+    const leituras = gerarLeiturasMock(dispositivo.id);
+    const ultima = leituras[0];
+    const status: StatusTelemetria = {
+      dispositivoId: dispositivo.id,
+      numeroSerie: dispositivo.numeroSerie,
+      status: dispositivo.status,
+      online: dispositivo.status !== 'SEM_SINAL',
+      ultimaLeituraEm: ultima.registradaEm,
+      bateriaPct: ultima.bateriaPct,
+      temperaturaAgua: ultima.temperaturaAgua,
+      ultimoPulsoOk: ultima.pulsoOk,
+      pulsosPorDia: dispositivo.pulsosPorDia,
+      taxaSucessoPulso7Dias: 80,
+      leiturasUltimos7Dias: leituras.length,
+      alertas:
+        ultima.bateriaPct < 15
+          ? [`Bateria em ${ultima.bateriaPct}%: recarregue ou troque a bateria.`]
+          : [],
+    };
+    return ok(config, status);
   }
   const leiturasMatch = url.match(/^\/api\/v1\/dispositivos\/(\d+)\/leituras$/);
   if (metodo === 'GET' && leiturasMatch) {
@@ -141,7 +178,7 @@ function paginar<T>(itens: T[], page: number, size: number) {
   const totalPages = Math.max(1, Math.ceil(itens.length / size));
   return {
     content: itens.slice(inicio, inicio + size),
-    number: page,
+    page,
     size,
     totalElements: itens.length,
     totalPages,
@@ -149,9 +186,24 @@ function paginar<T>(itens: T[], page: number, size: number) {
   };
 }
 
-function criarTokenFalso(id: number, email: string, papel: string): string {
-  const payload = btoa(JSON.stringify({ sub: email, id, papel }));
-  return `mock.${payload}.assinatura`;
+function respostaDeToken(u: UsuarioMock): LoginResponse {
+  const bairro = bairrosMock.find((b) => b.id === u.bairroId);
+  const payload = btoa(
+    JSON.stringify({ sub: String(u.id), id: u.id, papel: u.papel, bairroId: u.bairroId }),
+  );
+  return {
+    token: `mock.${payload}.assinatura`,
+    tipo: 'Bearer',
+    papel: u.papel,
+    usuario: {
+      id: u.id,
+      nome: u.nome,
+      email: u.email,
+      papel: u.papel,
+      bairroId: u.bairroId,
+      bairroNome: bairro?.nome ?? null,
+    },
+  };
 }
 
 function usuarioDoToken(config: InternalAxiosRequestConfig) {
