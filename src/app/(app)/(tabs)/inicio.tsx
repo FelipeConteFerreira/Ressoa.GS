@@ -202,10 +202,23 @@ export default function InicioScreen() {
         </FadeInView>
 
         <SonarPulse color={corNivel.background}>
-          <AppText variant="caption" style={[styles.sonarRotulo, { color: corNivel.text }]}>
+          <AppText
+            variant="caption"
+            style={[styles.sonarRotulo, { color: corNivel.text }]}
+            maxFontSizeMultiplier={1.2}
+          >
             RISCO
           </AppText>
-          <AppText style={[styles.sonarNivel, { color: corNivel.text }]}>{nivel ?? '—'}</AppText>
+          {/* Uma linha só: a fonte encolhe se não couber (ex.: VERMELHO com fonte grande no Android) */}
+          <AppText
+            style={[styles.sonarNivel, { color: corNivel.text }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.6}
+            maxFontSizeMultiplier={1.1}
+          >
+            {nivel ?? '—'}
+          </AppText>
         </SonarPulse>
 
         {nivel ? (
@@ -410,7 +423,13 @@ const styles = StyleSheet.create({
   saudacao: { fontFamily: fonts.bold, fontSize: 28, lineHeight: 34, color: '#FFFFFF' },
   subtitulo: { fontFamily: fonts.regular, fontSize: 15, color: 'rgba(255,255,255,0.75)' },
   sonarRotulo: { letterSpacing: 3, fontFamily: fonts.semiBold },
-  sonarNivel: { fontFamily: fonts.bold, fontSize: 22, lineHeight: 28 },
+  sonarNivel: {
+    fontFamily: fonts.bold,
+    fontSize: 18,
+    lineHeight: 24,
+    textAlign: 'center',
+    width: '100%',
+  },
   heroRodape: { gap: spacing.sm },
   acao: { fontFamily: fonts.regular, fontSize: 15, lineHeight: 21, color: '#FFFFFF' },
   content: { padding: spacing.md, gap: spacing.lg },

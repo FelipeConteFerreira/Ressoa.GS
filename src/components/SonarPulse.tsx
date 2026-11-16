@@ -16,7 +16,7 @@ interface SonarPulseProps {
  * Ondas que saem do centro em loop, como o pulso de ultrassom do aparelho Ressoa.
  * Feito só com Animated do React Native, sem bibliotecas extras.
  */
-export function SonarPulse({ color, size = 120, children }: SonarPulseProps) {
+export function SonarPulse({ color, size = 136, children }: SonarPulseProps) {
   const [ondas] = useState(() => Array.from({ length: ONDAS }, () => new Animated.Value(0)));
 
   useEffect(() => {
@@ -73,5 +73,5 @@ export function SonarPulse({ color, size = 120, children }: SonarPulseProps) {
 const styles = StyleSheet.create({
   area: { alignItems: 'center', justifyContent: 'center', alignSelf: 'center' },
   onda: { position: 'absolute', borderWidth: 3 },
-  centro: { alignItems: 'center', justifyContent: 'center' },
+  centro: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
 });
