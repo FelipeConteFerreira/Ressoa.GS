@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, View } from 'react-native';
 
 import { Button, DeviceCard, EmptyView, ErrorView, LoadingView } from '@/components';
+import { useAuth } from '@/contexts/AuthContext';
 import { dispositivoService } from '@/services';
 import { colors, radius, spacing } from '@/theme';
 import type { Dispositivo } from '@/types';
@@ -12,6 +13,7 @@ import { getErrorMessage } from '@/utils/errors';
 const TAMANHO_PAGINA = 10;
 
 export default function AparelhosScreen() {
+  const { sessao } = useAuth();
   const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
   const [pagina, setPagina] = useState(0);
   const [ultimaPagina, setUltimaPagina] = useState(true);
@@ -71,6 +73,7 @@ export default function AparelhosScreen() {
         renderItem={({ item }) => (
           <DeviceCard
             dispositivo={item}
+            mostrarDono={sessao?.papel === 'GESTOR'}
             onPress={() => router.push({ pathname: '/aparelho/[id]', params: { id: item.id } })}
           />
         )}
@@ -86,7 +89,13 @@ export default function AparelhosScreen() {
           carregandoMais ? <ActivityIndicator color={colors.primary} /> : undefined
         }
         ListEmptyComponent={
-          <EmptyView mensagem="Você ainda não cadastrou nenhum aparelho Ressoa.">
+          <EmptyView
+            mensagem={
+              sessao?.papel === 'GESTOR'
+                ? 'Nenhum aparelho Ressoa cadastrado ainda.'
+                : 'Você ainda não cadastrou nenhum aparelho Ressoa.'
+            }
+          >
             <Button title="Cadastrar aparelho" onPress={abrirFormulario} />
           </EmptyView>
         }

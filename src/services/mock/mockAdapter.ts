@@ -99,6 +99,8 @@ export const mockAdapter: AxiosAdapter = async (config) => {
         ...payload,
         id: Math.max(0, ...dispositivosMock.map((d) => d.id)) + 1,
         usuarioId: usuario.id,
+        usuarioNome: usuario.nome,
+        bairroNome: bairrosMock.find((b) => b.id === payload.bairroId)?.nome,
         status: 'ATIVO',
         instaladoEm: new Date().toISOString(),
       };

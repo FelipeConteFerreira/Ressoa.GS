@@ -11,10 +11,15 @@ import { StatusBadge } from './StatusBadge';
 interface DeviceCardProps {
   dispositivo: Dispositivo;
   onPress: () => void;
+  /** Para o GESTOR, que vê aparelhos de todos os moradores. */
+  mostrarDono?: boolean;
 }
 
-export function DeviceCard({ dispositivo, onPress }: DeviceCardProps) {
+export function DeviceCard({ dispositivo, onPress, mostrarDono = false }: DeviceCardProps) {
   const tipo = TIPO_RECIPIENTE_LABEL[dispositivo.tipoRecipiente];
+  const local = [dispositivo.bairroNome, mostrarDono ? dispositivo.usuarioNome : undefined]
+    .filter(Boolean)
+    .join(' · ');
   return (
     <Pressable
       onPress={onPress}
@@ -28,6 +33,11 @@ export function DeviceCard({ dispositivo, onPress }: DeviceCardProps) {
       </View>
       <View style={styles.info}>
         <AppText variant="bodyStrong">{dispositivo.numeroSerie}</AppText>
+        {local ? (
+          <AppText variant="caption" style={styles.local}>
+            {local}
+          </AppText>
+        ) : null}
         <AppText variant="caption" muted>
           {tipo} · {dispositivo.volumeLitros} L · {dispositivo.pulsosPorDia} pulso(s)/dia
         </AppText>
@@ -59,4 +69,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   info: { flex: 1, gap: spacing.xs },
+  local: { color: colors.primary },
 });
