@@ -1,17 +1,22 @@
 import type { NivelRisco } from '@/types';
 
 export const colors = {
-  primary: '#0E6BA8',
-  primaryDark: '#0A3D62',
-  primaryLight: '#E3F0F9',
-  accent: '#1FB5A8',
+  // Paleta da marca Ressoa (azul-petróleo + turquesa).
+  // O turquesa da logo (#1597A6) com texto branco não passa no contraste mínimo (4,5:1),
+  // então botões e links usam um tom mais escuro da mesma cor.
+  primary: '#0F7C89',
+  primaryDark: '#0A2B3D',
+  primaryLight: '#E2F4F5',
+  accent: '#1597A6',
+  /** Turquesa claro da logo: só para detalhes sobre o fundo escuro. */
+  brandGlow: '#5FD3DC',
 
-  background: '#F4F8FB',
+  background: '#F3F8F8',
   surface: '#FFFFFF',
-  border: '#DCE5EE',
+  border: '#D5E3E3',
 
-  text: '#0F1B2D',
-  textMuted: '#5B6B7F',
+  text: '#0A2B3D',
+  textMuted: '#52707A',
   textOnPrimary: '#FFFFFF',
 
   success: '#2E7D32',

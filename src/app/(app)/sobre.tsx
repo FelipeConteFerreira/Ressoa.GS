@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 import { Image, StyleSheet, View } from 'react-native';
 
 import { AppText, Card, Screen } from '@/components';
-import { colors, fonts, spacing } from '@/theme';
+import { fonts, spacing } from '@/theme';
 
 /** Exigida pela publicação no Firebase: mostra o hash do commit do build. Não conta para as 6 telas. */
 export default function SobreScreen() {
@@ -14,13 +14,11 @@ export default function SobreScreen() {
     <Screen scroll>
       <View style={styles.header}>
         <Image
-          source={require('../../../assets/images/logo.png')}
+          source={require('../../../assets/images/logo-horizontal.png')}
           style={styles.logo}
-          accessibilityLabel="Logo do Ressoa"
+          resizeMode="contain"
+          accessibilityLabel="Ressoa"
         />
-        <AppText variant="title" style={{ color: colors.primaryDark }}>
-          Ressoa
-        </AppText>
         <AppText muted style={styles.center}>
           Ultrassom contra a larva do Aedes na água guardada, com uma plataforma de risco que diz
           onde instalar e quando agir.
@@ -58,7 +56,7 @@ function Linha({ rotulo, valor, mono = false }: { rotulo: string; valor: string;
 
 const styles = StyleSheet.create({
   header: { alignItems: 'center', gap: spacing.sm, marginVertical: spacing.md },
-  logo: { width: 96, height: 96 },
+  logo: { width: 200, height: 57 },
   center: { textAlign: 'center' },
   linha: { flexDirection: 'row', justifyContent: 'space-between' },
   mono: { fontFamily: fonts.medium, letterSpacing: 1 },

@@ -37,14 +37,12 @@ export default function LoginScreen() {
     <Screen scroll edges={['top', 'bottom']}>
       <View style={styles.header}>
         <Image
-          source={require('../../../assets/images/logo.png')}
+          source={require('../../../assets/images/logo-horizontal.png')}
           style={styles.logo}
+          resizeMode="contain"
           accessibilityIgnoresInvertColors
-          accessibilityLabel="Logo do Ressoa"
+          accessibilityLabel="Ressoa"
         />
-        <AppText variant="title" style={styles.brand}>
-          Ressoa
-        </AppText>
         <AppText muted style={styles.center}>
           Som contra a larva do Aedes, antes que a seca vire epidemia.
         </AppText>
@@ -102,8 +100,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xl,
     marginBottom: spacing.lg,
   },
-  logo: { width: 120, height: 120 },
-  brand: { color: colors.primaryDark, fontSize: 34, lineHeight: 40 },
+  logo: { width: 240, height: 68 },
   center: { textAlign: 'center' },
   form: { gap: spacing.md },
   alert: { backgroundColor: colors.dangerLight, padding: spacing.md, borderRadius: 12 },
