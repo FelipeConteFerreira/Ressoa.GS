@@ -179,7 +179,7 @@ As URLs públicas das APIs ficam no perfil `preview` do `eas.json`, porque o EAS
 
 ## 🎬 Vídeo
 
-▶️ **[Assista à demonstração no YouTube]((https://youtu.be/m904Chqgkmo))**
+▶️ **https://youtu.be/m904Chqgkmo**
 
 ## 👥 Integrantes
 
