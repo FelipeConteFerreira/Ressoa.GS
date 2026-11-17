@@ -1,4 +1,4 @@
-<div align="center">
+div align="center">
 
 <img src="assets/images/logo.png" alt="Logo do Ressoa" width="120" />
 
@@ -179,7 +179,7 @@ As URLs públicas das APIs ficam no perfil `preview` do `eas.json`, porque o EAS
 
 ## 🎬 Vídeo
 
-▶️ **[Assista à demonstração no YouTube](LINK-DO-VIDEO)**
+▶️ **[Assista à demonstração no YouTube]((https://youtu.be/m904Chqgkmo))**
 
 ## 👥 Integrantes
 
