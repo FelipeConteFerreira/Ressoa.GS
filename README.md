@@ -46,29 +46,29 @@ O **Ressoa** tem duas partes:
   </tr>
 </table>
 
-| Tela | Rota | O que faz | API |
-| --- | --- | --- | --- |
-| Login | `/login` | Entrada com e-mail e senha | `POST /api/auth/login` |
-| Cadastro | `/cadastro` | Cria a conta do cidadão (nome, e-mail, senha e bairro) | `GET /api/bairros` · `POST /api/auth/registro` |
-| Início | `/inicio` | Nível de risco do bairro (VERDE, AMARELO, LARANJA ou VERMELHO) e o que fazer | `GET /api/bairros/{id}` |
-| Meus aparelhos | `/aparelhos` | Lista paginada, com pull-to-refresh | `GET /api/dispositivos` |
-| Novo/editar aparelho | `/aparelho/form` | Cria ou edita um aparelho, com validação | `POST` · `PUT /api/dispositivos` |
-| Detalhe do aparelho | `/aparelho/[id]` | Dados, último status e histórico de leituras; editar e excluir | `GET` · `DELETE /api/dispositivos/{id}` + API .NET |
-| Orientações | `/orientacoes` | Orientação ao morador ou plano de ação ao gestor, gerados por IA | `POST /api/bairros/{id}/orientacao` |
-| Perfil | `/perfil` | Dados da conta e logout | — |
-| Sobre o App | `/sobre` | Versão e hash do commit publicado | — |
+| Tela                 | Rota             | O que faz                                                                    | API                                                |
+| -------------------- | ---------------- | ---------------------------------------------------------------------------- | -------------------------------------------------- |
+| Login                | `/login`         | Entrada com e-mail e senha                                                   | `POST /api/auth/login`                             |
+| Cadastro             | `/cadastro`      | Cria a conta do cidadão (nome, e-mail, senha e bairro)                       | `GET /api/bairros` · `POST /api/auth/registro`     |
+| Início               | `/inicio`        | Nível de risco do bairro (VERDE, AMARELO, LARANJA ou VERMELHO) e o que fazer | `GET /api/bairros/{id}`                            |
+| Meus aparelhos       | `/aparelhos`     | Lista paginada, com pull-to-refresh                                          | `GET /api/dispositivos`                            |
+| Novo/editar aparelho | `/aparelho/form` | Cria ou edita um aparelho, com validação                                     | `POST` · `PUT /api/dispositivos`                   |
+| Detalhe do aparelho  | `/aparelho/[id]` | Dados, último status e histórico de leituras; editar e excluir               | `GET` · `DELETE /api/dispositivos/{id}` + API .NET |
+| Orientações          | `/orientacoes`   | Orientação ao morador ou plano de ação ao gestor, gerados por IA             | `POST /api/bairros/{id}/orientacao`                |
+| Perfil               | `/perfil`        | Dados da conta e logout                                                      | —                                                  |
+| Sobre o App          | `/sobre`         | Versão e hash do commit publicado                                            | —                                                  |
 
 ## ✅ Requisitos da disciplina
 
-| Requisito | Como foi atendido |
-| --- | --- |
-| **1. Telas e navegação** | 8 telas + "Sobre o App" com Expo Router: Stack para o fluxo e abas para a área logada |
-| **2. CRUD com API** | CRUD completo de aparelhos na API Java via Axios, com loaders, mensagens de erro e "tentar de novo". Status e histórico vêm da API .NET |
-| **3. Autenticação** | Cadastro e login reais com JWT, sessão no SecureStore, rotas protegidas com `Stack.Protected`, logout que limpa a sessão e encerramento automático ao receber 401 |
-| **4. Estilização** | Identidade visual própria: paleta azul-água, fonte Inter, logo, ícone e splash. Áreas de toque de 44 a 50 px, rótulos de acessibilidade e risco sempre com cor **e** texto |
-| **5. Arquitetura** | Pastas por responsabilidade (telas, componentes, services, contexto, tema, tipos, utilitários), TypeScript estrito, ESLint e Prettier |
-| **6. Vídeo** | [Link na seção Vídeo](#-vídeo) |
-| **7. Publicação** | Firebase App Distribution. A tela "Sobre o App" mostra o hash do commit do build |
+| Requisito                | Como foi atendido                                                                                                                                                          |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. Telas e navegação** | 8 telas + "Sobre o App" com Expo Router: Stack para o fluxo e abas para a área logada                                                                                      |
+| **2. CRUD com API**      | CRUD completo de aparelhos na API Java via Axios, com loaders, mensagens de erro e "tentar de novo". Status e histórico vêm da API .NET                                    |
+| **3. Autenticação**      | Cadastro e login reais com JWT, sessão no SecureStore, rotas protegidas com `Stack.Protected`, logout que limpa a sessão e encerramento automático ao receber 401          |
+| **4. Estilização**       | Identidade visual própria: paleta azul-água, fonte Inter, logo, ícone e splash. Áreas de toque de 44 a 50 px, rótulos de acessibilidade e risco sempre com cor **e** texto |
+| **5. Arquitetura**       | Pastas por responsabilidade (telas, componentes, services, contexto, tema, tipos, utilitários), TypeScript estrito, ESLint e Prettier                                      |
+| **6. Vídeo**             | [Link na seção Vídeo](#-vídeo)                                                                                                                                             |
+| **7. Publicação**        | Firebase App Distribution. A tela "Sobre o App" mostra o hash do commit do build                                                                                           |
 
 ## 🏗 Arquitetura
 
@@ -94,10 +94,10 @@ assets/
 
 APIs consumidas:
 
-| API | Repositório | Deploy |
-| --- | --- | --- |
-| Java · Spring Boot | [ressoa-api-java](https://github.com/olavoneves/ressoa-api-java) | https://ressoa-api-java.onrender.com/swagger-ui.html |
-| .NET · Telemetria | [ressoa-api-dotnet](https://github.com/olavoneves/ressoa-api-dotnet) | https://ressoa-api-dotnet.onrender.com/swagger |
+| API                | Repositório                                                          | Deploy                                               |
+| ------------------ | -------------------------------------------------------------------- | ---------------------------------------------------- |
+| Java · Spring Boot | [ressoa-api-java](https://github.com/olavoneves/ressoa-api-java)     | https://ressoa-api-java.onrender.com/swagger-ui.html |
+| .NET · Telemetria  | [ressoa-api-dotnet](https://github.com/olavoneves/ressoa-api-dotnet) | https://ressoa-api-dotnet.onrender.com/swagger       |
 
 ```text
 [App Mobile] ──login, cadastro, CRUD, risco, IA──▶ [API Java · Spring Boot] ──▶ Oracle
@@ -114,14 +114,14 @@ APIs consumidas:
 
 ### Bibliotecas
 
-| Biblioteca | Por quê |
-| --- | --- |
-| `expo-router` | Navegação baseada em arquivos, com proteção de rotas |
-| `axios` | Cliente HTTP com interceptors para o token e o tratamento de 401 |
-| `expo-secure-store` | Guarda o JWT no Keychain/Keystore, e não em texto aberto |
-| `expo-font` | Carrega a fonte Inter de `assets/fonts` |
-| `@expo/vector-icons` | Ícones das abas e dos cards |
-| `eslint` · `prettier` | Padronização e formatação do código |
+| Biblioteca            | Por quê                                                          |
+| --------------------- | ---------------------------------------------------------------- |
+| `expo-router`         | Navegação baseada em arquivos, com proteção de rotas             |
+| `axios`               | Cliente HTTP com interceptors para o token e o tratamento de 401 |
+| `expo-secure-store`   | Guarda o JWT no Keychain/Keystore, e não em texto aberto         |
+| `expo-font`           | Carrega a fonte Inter de `assets/fonts`                          |
+| `@expo/vector-icons`  | Ícones das abas e dos cards                                      |
+| `eslint` · `prettier` | Padronização e formatação do código                              |
 
 As demais dependências vêm do template oficial do Expo e são exigidas pelo Expo Router.
 
@@ -141,21 +141,21 @@ Leia o QR code com o Expo Go, ou aperte `w` para abrir no navegador.
 
 ### Variáveis de ambiente
 
-| Variável | Descrição |
-| --- | --- |
-| `EXPO_PUBLIC_JAVA_API_URL` | URL da API Java (sem barra no final) |
-| `EXPO_PUBLIC_DOTNET_API_URL` | URL da API .NET (sem barra no final) |
-| `EXPO_PUBLIC_USE_MOCK` | `true` usa a API simulada; `false` usa as APIs reais |
+| Variável                     | Descrição                                            |
+| ---------------------------- | ---------------------------------------------------- |
+| `EXPO_PUBLIC_JAVA_API_URL`   | URL da API Java (sem barra no final)                 |
+| `EXPO_PUBLIC_DOTNET_API_URL` | URL da API .NET (sem barra no final)                 |
+| `EXPO_PUBLIC_USE_MOCK`       | `true` usa a API simulada; `false` usa as APIs reais |
 
 > Variáveis `EXPO_PUBLIC_` ficam embutidas no app: elas só guardam URLs, nunca senhas ou chaves. O `.env` não vai para o Git.
 
 ### Usuários de teste
 
-| Papel | E-mail | Senha |
-| --- | --- | --- |
+| Papel   | E-mail               | Senha         |
+| ------- | -------------------- | ------------- |
 | Cidadão | `morador@ressoa.app` | `Ressoa@2026` |
-| Cidadão | `joao@ressoa.app` | `Ressoa@2026` |
-| Gestor | `gestor@ressoa.app` | `Ressoa@2026` |
+| Cidadão | `joao@ressoa.app`    | `Ressoa@2026` |
+| Gestor  | `gestor@ressoa.app`  | `Ressoa@2026` |
 
 Os mesmos usuários existem nas APIs reais e na API simulada.
 
@@ -171,7 +171,7 @@ npm run typecheck   # TypeScript
 
 O app está publicado no **Firebase App Distribution** (APK Android gerado com EAS Build).
 
-**Link de instalação (Firebase App Distribution):** 
+**Link de instalação (Firebase App Distribution):**
 https://appdistribution.firebase.dev/i/986b85da0cb9bbce
 
 Versão publicada: tag `v1.0.2` (commit `c6fb263`). Instale no celular Android pelo link acima.
@@ -180,7 +180,7 @@ Versão publicada: tag `v1.0.2` (commit `c6fb263`). Instale no celular Android p
 eas build -p android --profile preview
 ```
 
-As URLs públicas das APIs ficam no perfil `preview` do `eas.json`, porque o EAS Build não lê o `.env`. O commit publicado é marcado com uma tag (`v1.0.0`), e a tela **Sobre o App** mostra o mesmo hash.
+As URLs públicas das APIs ficam no perfil `preview` do `eas.json`, porque o EAS Build não lê o `.env`. O commit publicado é marcado com uma tag (`v1.0.2`), e a tela **Sobre o App** mostra o mesmo hash.
 
 ## 🎬 Vídeo
 
@@ -188,10 +188,10 @@ As URLs públicas das APIs ficam no perfil `preview` do `eas.json`, porque o EAS
 
 ## 👥 Integrantes
 
-| Nome | RM |
-| --- | --- |
-| Altamir Lima | 562906 |
-| Felipe Conte | 562248 |
-| Luiz Gustavo | 564495 |
-| Olavo Porto Neves | 563558 |
+| Nome                       | RM     |
+| -------------------------- | ------ |
+| Altamir Lima               | 562906 |
+| Felipe Conte               | 562248 |
+| Luiz Gustavo               | 564495 |
+| Olavo Porto Neves          | 563558 |
 | Pedro Henrique Dias França | 561940 |
