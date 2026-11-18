@@ -171,6 +171,11 @@ npm run typecheck   # TypeScript
 
 O app está publicado no **Firebase App Distribution** (APK Android gerado com EAS Build).
 
+**Link de instalação (Firebase App Distribution):** 
+https://appdistribution.firebase.dev/i/986b85da0cb9bbce
+
+Versão publicada: tag `v1.0.2` (commit `c6fb263`). Instale no celular Android pelo link acima.
+
 ```bash
 eas build -p android --profile preview
 ```
